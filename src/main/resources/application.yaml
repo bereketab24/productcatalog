@@ -1,3 +1,16 @@
 spring:
   application:
     name: productcatalog
+  datasource:
+    url: jdbc:postgresql://localhost:5432/product_catalog
+    username: product_catalog
+    password: product_catalog
+  jpa:
+    hibernate:
+      ddl-auto: none
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+springdoc:
+  swagger-ui:
+    tags-sorter: alpha
+    operations-sorter: alpha

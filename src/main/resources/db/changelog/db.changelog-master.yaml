@@ -1,0 +1,118 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001
+      author: bereketab
+      changes:
+        - createTable:
+            tableName: producer
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: product
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: text
+              - column:
+                  name: price
+                  type: decimal(10,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: producer_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: attributes
+                  type: jsonb
+        - addForeignKeyConstraint:
+            baseTableName: product
+            baseColumnNames: producer_id
+            referencedTableName: producer
+            referencedColumnNames: id
+            constraintName: fk_product_producer
+
+  - changeSet:
+      id: 002
+      author: bereketab
+      changes:
+        # --- Producer Inserts ---
+        - insert:
+            tableName: producer
+            columns:
+              - column: { name: name, value: "Samsung" }
+        - insert:
+            tableName: producer
+            columns:
+              - column: { name: name, value: "Apple" }
+
+        # --- Product Inserts ---
+        - insert:
+            tableName: product
+            columns:
+              - column: { name: name, value: "Samsung QLED TV" }
+              - column: { name: description, value: "65-inch 4K Smart TV" }
+              - column: { name: price, value: "1299.99" }
+              - column: { name: producer_id, valueNumeric: "1" }
+              - column: { name: attributes, value: '{"width":120,"height":80,"depth":5,"energy_rating":"A","certifications":["Energy Star"]}' }
+        - insert:
+            tableName: product
+            columns:
+              - column: { name: name, value: "iPhone 16 Pro" }
+              - column: { name: description, value: "Latest flagship phone" }
+              - column: { name: price, value: "1199.00" }
+              - column: { name: producer_id, valueNumeric: "2" }
+              - column: { name: attributes, value: '{"color":"Desert Titanium","warranty_period":24,"production_country":"China"}' }
+        - insert:
+            tableName: product
+            columns:
+              - column: { name: name, value: "Samsung Galaxy S25" }
+              - column: { name: description, value: "Next-gen Android flagship" }
+              - column: { name: price, value: "899.99" }
+              - column: { name: producer_id, valueNumeric: "1" }
+              - column: { name: attributes, value: '{"color":"Titanium","warranty_period":24,"energy_rating":"A"}' }
+        - insert:
+            tableName: product
+            columns:
+              - column: { name: name, value: "MacBook Pro 16\"" }
+              - column: { name: description, value: "M4 Pro chip" }
+              - column: { name: price, value: "2499.99" }
+              - column: { name: producer_id, valueNumeric: "2" }
+              - column: { name: attributes, value: '{"weight":2.1,"ram":"32GB","storage":"1TB"}' }
+        - insert:
+            tableName: product
+            columns:
+              - column: { name: name, value: "Galaxy Watch 7" }
+              - column: { name: description, value: "Health tracking watch" }
+              - column: { name: price, value: "299.99" }
+              - column: { name: producer_id, valueNumeric: "1" }
+              - column: { name: attributes, value: '{"battery_life":48,"water_resistant":true,"material":"Titanium"}' }
+  - changeSet:
+      id: 003
+      author: bereketab
+      changes:
+        - sql:
+            # I used raw SQL because GIN is a Postgres-specific index type
+            sql: CREATE INDEX idx_product_attributes_gin ON product USING GIN (attributes);
