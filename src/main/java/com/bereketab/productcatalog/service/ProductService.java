@@ -51,6 +51,8 @@ public class ProductService {
         return mapper.toResponse(saved);
     }
 
+    // Update main product fields fully.
+    // Attributes (JSONB) are updated only if provided to prevent overwriting existing dynamic keys.
     @Transactional
     public ProductResponse updateProduct(Long id, ProductCreateRequest request) {
         Product existing = productRepository.findById(id)
@@ -81,6 +83,9 @@ public class ProductService {
         }
         productRepository.deleteById(id);
     }
+
+//    Bonus Producer End points
+
 
     @Transactional(readOnly = true)
     public List<ProducerResponse> getAllProducers() {
